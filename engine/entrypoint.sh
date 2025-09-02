@@ -1,14 +1,19 @@
-#!/usr/bin/env sh
-set -e
-ENGINE_ROOT="${ENGINE_ROOT:-/app/backend/data}"
-export ENGINE_ROOT
-
-echo "[entrypoint] starting engine daemon..."
-python /app/engine/engine_daemon.py &
-
 # start Open WebUI in foreground, binding to platform port
 if command -v open-webui >/dev/null 2>&1; then
   exec open-webui serve --host 0.0.0.0 --port "${PORT:-8080}"
+elif python - <<'PY'
+import importlib.util
+import sys
+sys.exit(0 if importlib.util.find_spec("open_webui.main") else 1)
+PY
+then
+  if command -v uvicorn >/dev/null 2>&1; then
+    exec uvicorn open_webui.main:app --host 0.0.0.0 --port "${PORT:-8080}"
+  else
+    exec python -m uvicorn open_webui.main:app --host 0.0.0.0 --port "${PORT:-8080}"
+  fi
 else
-  exec python -m open_webui
+  echo "[entrypoint] ERROR: Open WebUI package not found in image" >&2
+  exit 1
 fi
+
