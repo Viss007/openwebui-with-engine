@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Run Manifest",
+  "type": "object",
+  "properties": {
+    "timestamp": { "type": "string" },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string" },
+          "action": { "type": "string", "enum": ["created", "updated"] },
+          "backup": { "type": ["string", "null"] },
+          "bytes": { "type": "number" }
+        },
+        "required": ["path", "action", "bytes"]
+      }
+    }
+  },
+  "required": ["timestamp", "files"]
+}
