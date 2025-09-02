@@ -1,13 +1,16 @@
 FROM ghcr.io/open-webui/open-webui:main
 
-# Copy the engine files
+# Copy engine files
 COPY engine /app/engine
 
-# Normalize script (LF line endings, no BOM) and ensure it's executable
+# Normalize + make executable (safe even if already LF)
 RUN set -eux; \
     sed -i 's/\r$//' /app/engine/entrypoint.sh; \
     sed -i '1s/^\xEF\xBB\xBF//' /app/engine/entrypoint.sh || true; \
     chmod +x /app/engine/entrypoint.sh
 
+# Open WebUI defaults to 8080 inside the container
 ENV PORT=8080
-ENTRYPOINT ["/app/engine/entrypoint.sh"]
+
+# *** KEY FIX: run via /bin/sh to avoid shebang/encoding surprises ***
+ENTRYPOINT ["/bin/sh", "/app/engine/entrypoint.sh"]
