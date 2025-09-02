@@ -2,8 +2,7 @@
 if command -v open-webui >/dev/null 2>&1; then
   exec open-webui serve --host 0.0.0.0 --port "${PORT:-8080}"
 elif python - <<'PY'
-import importlib.util
-import sys
+import importlib.util, sys
 sys.exit(0 if importlib.util.find_spec("open_webui.main") else 1)
 PY
 then
@@ -16,4 +15,3 @@ else
   echo "[entrypoint] ERROR: Open WebUI package not found in image" >&2
   exit 1
 fi
-
