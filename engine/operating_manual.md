@@ -414,6 +414,8 @@ UPGRADE REQUEST
 
 ---
 
+## Operating Principles (continued)
+
 ## Context Pack (filled — KPI dashboard & alerts)
 
 - 🎯 **Objective:** Ship a daily KPI ping and a lightweight HTML dashboard that track **MRR, CAC, D30 retention**, and raise alerts on CAC/retention swings.
@@ -489,7 +491,7 @@ UPGRADE REQUEST
 | Apply to disk          | Write files to `/mnt/data` with manifest + backup; runs `pre_apply_lint` | Yes                                      | Yes            | Persist edits. See: `Apply to disk /mnt/data/getting_started.md`.                    |                                                                               |
 | Apply --dry-run [paths | all]                                                                     | Preview status, hashes, diffs; no writes | No             | No                                                                                   | Check what would change. See: `Apply --dry-run /mnt/data/getting_started.md`. |
 
-\| Apply --atomic [paths|all] | Stage all writes; all-or-nothing on success (**effective only for 2+ targets**) | Yes | Yes | Safer multi-file apply. Pair with Apply to disk. | | Web → Python handoff | Browse → save to `/mnt/data/web_ingest/...` → analyze offline → write to `/mnt/data/processed/...` | Yes | Yes | Bring web data into Python safely (two-stage ingest→process). | | Rollback | Restore files from a prior apply manifest | Yes | Yes | Undo a bad apply. | | Revert | Restore one file to an exact recorded hash | Yes | Yes | Pin a file to a known-good state. | | Doctor | Check files and record a report with severity levels *(writes a report file only; does not modify target files)* | Yes (report) | No | Health check after writes. See: `Doctor --summary --gzip`. | | Status | Summarize last applies, Doctor, and hashes | No | No | Quick state overview. See: `Status`. | | Auto-apply (100%) | Apply tiny non-semantic fixes only when all green-checklist conditions pass; otherwise ask as usual | Yes | No (if green) | **On by default**; eligible: typo/spacing/link/heading fixes; writes manifest and shows rollback id. | | Polish (comment-only) | Run final-polish pass and leave suggested edits as comments (max 5/500 words); prompts to apply or skip | No | No | Language/flow cleanup before publish; will ask `Apply polish edits? (yes/no)` after suggestions. | | Polish — export diff | Generate a downloadable unified diff (`.patch`) of proposed polish edits; does not change content | Yes (file) | No | Review offline or in Git; saved under `/mnt/data/diffs/polish_<YYYYMMDD_HHMMSS>.patch`. | | Agent schedules (open) | Open schedules management (chatgpt.com/schedules) to review or edit recurring runs | No | No | Manage/cancel recurring Agent runs. | | Finish | End the loop for now | No | No | Stop when you’re done. |
+\| Apply --atomic [paths|all] | Stage all writes; all-or-nothing on success (**effective only for 2+ targets**) | Yes | Yes | Safer multi-file apply. Pair with Apply to disk. | | Web → Python handoff | Browse → save to `/mnt/data/web_ingest/...` → analyze offline → write to `/mnt/data/processed/...` | Yes | Yes | Bring web data into Python safely (two-stage ingest→process). | | Rollback | Restore files from a prior apply manifest | Yes | Yes | Undo a bad apply. | | Revert | Restore one file to an exact recorded hash | Yes | Yes | Pin a file to a known-good state. | | Doctor | Check files and record a report with severity levels *(writes a report file only; does not modify target files)* | Yes (report) | No | Health check after writes. See: `Doctor --summary --gzip`. | | Status | Summarize last applies, Doctor, and hashes | No | No | Quick state overview. See: `Status`. | | Auto-apply (100%) | Apply tiny non-semantic fixes only when all green-checklist conditions pass; otherwise ask as usual | Yes | No (if green) | **On by default**; eligible: typo/spacing/link/heading fixes; writes manifest and shows rollback id. | | Polish (comment-only) | Run final-polish pass and leave suggested edits as comments (max 5/500 words); prompts to apply or skip | No | No | Language/flow cleanup before publish; will ask `Apply polish edits? (yes/no)` after suggestions. | | Polish — export diff | Generate a downloadable unified diff (`.patch`) of proposed polish edits; does not change content | Yes (file) | No | Review offline or in Git; saved under `/mnt/data/diffs/`. | | Agent schedules (open) | Open schedules management (chatgpt.com/schedules) to review or edit recurring runs | No | No | Manage/cancel recurring Agent runs. | | Finish | End the loop for now | No | No | Stop when you’re done. |
 
 **Notes (per-action mini-notes)**
 
@@ -504,7 +506,7 @@ UPGRADE REQUEST
 - 📊 Status is read-only snapshot of recent applies and doctor reports.
 - ✨ Polish is comment-only; proposes up to 5 edits per 500 words; default answer to apply is **no**.
 - 📦 Polish — export diff writes a timestamped `.patch` file under `/mnt/data/diffs/`.
-- ⚙️ Auto‑apply (100%) is **on by default**; tiny non‑semantic fixes only; requires dry‑run==planned diff, lint OK, doctor OK, cooldown 0.
+- ⚙️ Auto-apply (100%) is **on by default**; tiny non-semantic fixes only; requires dry-run==planned diff, lint OK, doctor OK, cooldown 0.
 - 🏁 Finish ends the loop; no side effects.
 
 ---
@@ -731,8 +733,6 @@ The full command list now lives in **Ops Library — Appendix A**.
 - ⚙️ **Performance help:** see **Ops Library — Appendix F** (Brave + ChatGPT performance checklist).
 
 ---
-
-
 
 Source: Core Manual · canvas
 

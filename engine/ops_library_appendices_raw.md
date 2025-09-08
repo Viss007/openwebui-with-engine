@@ -424,28 +424,6 @@ python /mnt/data/tools/process_web_ingest.py -i /mnt/data/web_ingest -o /mnt/dat
 - 🌐 **Browse vs Deep Research:** ≤60 s quick browse for stable facts; Deep Research for volatile/high‑stakes topics.
 - 🛑 **When to stop:** at **T+300 s**, on **Doctor/Status critical**, or when **preconditions fail** → return partial + next steps, stop.
 
-### Agent Mode Extensions
-
-**Guardrails (always on)**
-
-- ⛔ No background work; runs only when invoked or on approved schedules.
-- 🔒 Read‑only by default; **ask before any write** or browsing step that would change disk state.
-- ⏱️ Max **300 s/run**; if longer, do a safe partial and stop.
-- 🚫 No secrets; no spend; no external services without explicit approval.
-
-**Agent Quick Actions**
-
-- 🧑‍⚕️ **Agent: Doctor** — health check of files and last manifests; writes a short report to `/mnt/data/.doctor/` (only when you say to apply).
-- 📈 **Agent: Status** — list recent applies, hashes, and sizes.
-- 🧾 **Agent: Summon Brief \<topic|URL>** — one‑pager with key points and sources.
-- 🔍 **Agent: Deep Research** — multi‑source investigation with citations; outputs a Research Brief and evidence table.
-
-**Enable / Disable**
-
-- 🟢 Say “enable KPI ping for 09:00” or “disable competitor sweep.”
-- 🗂️ **Logging:** per‑agent logs at `/mnt/data/.agent_logs/<agent>.jsonl`; index at `/mnt/data/.agent_logs/index.jsonl`.
-- 🗓️ **Retention:** keep logs 90 days, then rotate.
-
 ### Deep Research Mode
 
 **Use when**

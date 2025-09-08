@@ -137,7 +137,7 @@ Outcome plan (standard): €0.90 per AI resolution (min 50/mo), billed monthly; 
 | Growth         | MRR                              | **€3,200 by 2025‑10‑31**  | Monthly target |
 | Support Ops    | First Response Time (FRT)        | **−30% in 14 days**       | Pilot KPI |
 | Support Ops    | D30 Resolution Rate              | **+20%**                  | Alternative KPI |
-| Retention      | Logo/Net retention               | \> 90% / \> 100%         | Track quarterly |
+| Retention      | Logo/Net retention               | > 90% / > 100%         | Track quarterly |
 | Efficiency     | CAC Payback                      | **< 3 months**            | Rule of thumb |
 | Support Ops    | AI resolutions share            | **≥ 25% of inbound**      | rolling 30-day |
 | Quality        | Eval pass-rate                  | **≥ 95%**                  | Appendix M metrics |
