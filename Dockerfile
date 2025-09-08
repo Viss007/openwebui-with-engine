@@ -1,16 +1,23 @@
-# Dockerfile — OpenWebUI + engine
+# Pin to Open WebUI base image
 FROM ghcr.io/open-webui/open-webui:latest
 
 WORKDIR /app
-COPY engine/ /app/engine/
 
-# Ensure entrypoint executes cleanly on Railway
-RUN chmod +x /app/engine/entrypoint.sh \
-    && sed -i 's/\r$//' /app/engine/entrypoint.sh
+# Copy engine code
+COPY engine /app/engine
 
-ENV DATA_DIR="/app/backend/data" \
-    GLOBAL_LOG_LEVEL="INFO" \
-    USER_AGENT="reasonable-insight/production"
+# Normalize line endings and ensure entrypoint is executable
+RUN sed -i 's/\r$//' /app/engine/entrypoint.sh && \
+    chmod +x /app/engine/entrypoint.sh
 
-# Starts the daemon then uvicorn (serves OpenWebUI mounted at "/")
+# Sane defaults
+ENV DATA_DIR=/data \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app/backend:/app
+
+# Open WebUI listens on 8080 in the container; platform will map externally
+EXPOSE 8080
+
+# Start the combined engine + web server
 CMD ["/bin/sh","-lc","/app/engine/entrypoint.sh"]
