@@ -1,6 +1,6 @@
 """
 FastAPI wrapper that exposes engine health/info routes and then mounts Open WebUI.
-Key change: health routes are registered BEFORE mounting "/" so they are not shadowed.
+Routes are registered BEFORE mounting "/" so they are not shadowed by the UI.
 """
 import os, sys, hashlib, pathlib
 from fastapi import FastAPI, APIRouter
@@ -30,7 +30,6 @@ def info():
     ep = pathlib.Path("/app/engine/entrypoint.sh")
     sha = None
     if ep.exists():
-        import hashlib
         h = hashlib.sha256()
         h.update(ep.read_bytes())
         sha = h.hexdigest()[:12]
