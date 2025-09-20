@@ -1,0 +1,5 @@
+creation_rules:
+  - path_regex: '^infra/secrets/.*\.(env|yaml|json)\.sops$'
+    # Replace this with your *public* age key, e.g. age1q2w3e4r5t6...
+    age:
+      - "REPLACE_WITH_AGE_PUBLIC_KEY"
