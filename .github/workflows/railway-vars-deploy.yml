@@ -1,0 +1,67 @@
+name: Set Railway vars & deploy (SOPS)
+
+on:
+  workflow_dispatch:
+    inputs:
+      redeploy:
+        description: "Redeploy after setting variables?"
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  set-vars:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup sops
+        uses: nhedger/setup-sops@v2
+
+      - name: Setup age
+        uses: alessiodionisi/setup-age-action@v1
+
+      - name: Decrypt env and export
+        uses: LNSD/sops-exec-action@v1.1.2
+        env:
+          SOPS_AGE_KEY: ${{ secrets.AGE_SECRET_KEY }}
+        with:
+          env_file: infra/secrets/.env.sops
+          run: |
+            echo "ENGINE_MCP_SSE_URL=${ENGINE_MCP_SSE_URL}" >> $GITHUB_ENV
+            echo "ENGINE_LOG_LEVEL=${ENGINE_LOG_LEVEL}" >> $GITHUB_ENV
+            echo "ENGINE_MCP_HTTP_URL=${ENGINE_MCP_HTTP_URL}" >> $GITHUB_ENV
+            echo "ENGINE_MCP_TOKEN=${ENGINE_MCP_TOKEN}" >> $GITHUB_ENV
+
+      - name: Set Railway variables
+        uses: docker://ghcr.io/railwayapp/cli:latest
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ vars.RAILWAY_PROJECT_ID }}
+          RAILWAY_ENVIRONMENT: ${{ vars.RAILWAY_ENVIRONMENT }}
+          RAILWAY_SERVICE: ${{ vars.RAILWAY_SERVICE }}
+        with:
+          args: >
+            bash -lc "
+              railway link $RAILWAY_PROJECT_ID || true;
+              railway environment --environment $RAILWAY_ENVIRONMENT;
+              railway variables --service "$RAILWAY_SERVICE"
+                --set ENGINE_MCP_SSE_URL='${{ env.ENGINE_MCP_SSE_URL }}'
+                --set ENGINE_LOG_LEVEL='${{ env.ENGINE_LOG_LEVEL }}';
+            "
+
+      - name: Optional redeploy
+        if: ${{ inputs.redeploy == true }}
+        uses: docker://ghcr.io/railwayapp/cli:latest
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ vars.RAILWAY_PROJECT_ID }}
+          RAILWAY_ENVIRONMENT: ${{ vars.RAILWAY_ENVIRONMENT }}
+          RAILWAY_SERVICE: ${{ vars.RAILWAY_SERVICE }}
+        with:
+          args: >
+            bash -lc "
+              railway link $RAILWAY_PROJECT_ID || true;
+              railway environment --environment $RAILWAY_ENVIRONMENT;
+              railway redeploy --service "$RAILWAY_SERVICE";
+            "
