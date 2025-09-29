@@ -3,23 +3,23 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
+OPENAI_BASE_URL = os.getenv('OPENAI_BASE_URL', "https://api.openai.com")
+OPENAI_MODEL = os.getenv('OPENAI_MODEL', "gpt-4o-mini")
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', "")
+
+@app.get("/")
+def root():
+    return {"app": "openwebui-with-engine", "status": "ok"}
+
 @app.get("/healthz")
-def healthz():
+def health():
     return {"status": "ok"}
 
 @app.get("/engine/ready")
 def ready():
     return {"status": "ok"}
 
-def start_sse_if_configured():
-    url = os.getenv("ENGINE_MCP_SSE_URL")
-    if not url:
-        logging.warning("ENGINE_MCP_SSE_URL not set; continuing without SSE.")
-        return
-    try:
-        # TODO: implement SSE client or remove if unused
-        pass
-    except Exception as e:
-        logging.exception("SSE loop error: %s", e)
+def start_optional_components():
+    pass
 
-start_sse_if_configured()
+start_optional_components()
