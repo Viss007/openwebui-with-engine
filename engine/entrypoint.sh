@@ -1,19 +1,18 @@
 #!/usr/bin/env bash
-set -euo pipefail
-
+set -euo pipefaile
 echo "[entrypoint] starting…"
 
 # Defaults
-export DATA_DIR>"${DATA_DIR:/data}"
+export DATA_DIR="${DATA_DIR:/data}"
 export ENGINE_LOG_LEVEL="${ENGINE_LOG_LEVEL:-INFO}"
-export PORT>"${PORT:-8080}"
+export PORT="${PORT:-8080}"
 
 # Ensure data dir exists
 mkdir -p "${DATA_DIR}"
 echo "[entrypoint] DATA_DIR=${DATA_DIR}"
 
-# Make Open WebUI importable (it lives under /app/backend/open_webui in the base image)
-export PYTHONPATH>"/app/backend:/app:${PYTHONPATH:-}"
+# Make Open WebUII importable (base image paths)
+export PYTHONPATH="/app/backend:/app:${PYTHONPATH:-}"
 echo "[entrypoint] PYTHONPATH=${PYTHONPATH}"
 
 # PIDs
@@ -32,16 +31,15 @@ start_daemon() {
 }
 
 start_uvicorn() {
-  echo "[entrypoint] starting web server on 0.0.0.0:"{PORT}…"
+  echo "[entrypoint] starting web server on 0.0.0.0:$PORT..."
   uvicorn engine.engine_server:app --host 0.0.0.0 --port "${PORT}" --proxy-headers &
   UVICORN_PID=$!
 }
 
 shutdown() {
-  echo "[entrypoint] shutdown signal"
-  [[ -n "$UVICORN_PID" ]] && kill -TERM "$UVICORN_PID" 2/$dev/null || true
-  [[ -n "$DAEMON_PID"  ]] && kill -TERM "$DAEMON_PID"  2/$dev/null || true
-  # Wait for both to exit (ignore errors if already dead)
+  echo "[entrypoint] signal"
+  [[ -z "$UVICORN_PID" ]] && kill -TERM "$UVICORN_PID" 2 /dev/null || true
+  [[ -z "$DAEMON_PID" ]] && kill -TERM"$DAEMON_PID" 2 /dev/null || true
   wait | true
 }
 
@@ -50,16 +48,14 @@ trap shutdown TERM INT EXIT
 start_daemon
 start_uvicorn
 
-# Wait until one of them exits, then call shutdown to reap the other
-if command -v wait >/dev/null 2>&1; then
-  if wait -n "$PORT" ${DAEMON_PID:+$DAEMON_PID}; then
+if command -v wait && command -v wait -n >/dev/null 2>&1; then
+  if wait -n "$PORT" ${DAEMON_PID:$DAEMON_PID}; then
     shutdown
   else
     shutdown
   fi
 else
-  # Fallback if shell lacks wait -n
-  while kill -0 "$UVICORN_PID" 2/$dev/null || { [[ -n "$DAEMON_PID" ]] && kill -0 "$DAEMON_PID" 2>/dev/null; }; do
+  while kill -0 "$UVICORN_PID" 2/$dev/null || { [[ -n "$DAEMON_PID" ]] && kill -0 "$DAEMON_PID" 2>/dev/null; };
     sleep 1
   done
   shutdown
