@@ -1,6 +1,6 @@
 import os, logging
 from fastapi import FastAPI, Response
-from fastapi.staticFiles import StaticFiles
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
