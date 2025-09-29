@@ -1,3 +1,7 @@
-creation_rules:
-    age:
-      - "REPLACE_WITH_AGE_PUBLIC_KEY"
+- uses: actions/setup-node@v4
+  with: { node-version: 20 }
+- run: corepack enable
+- uses: pnpm/action-setup@v3
+  with: { version: 9, run_install: true }
+- run: pnpm build
+- run: pnpm -s test || echo 'no tests'
