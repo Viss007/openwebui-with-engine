@@ -1,0 +1,15 @@
+{
+  "quiet_hours": {
+    "start": "22:00",
+    "end": "07:00",
+    "tz": "Europe/Vilnius"
+  },
+  "thresholds": {
+    "cac_pct_swing": 20,
+    "d30_pct_swing": 20
+  },
+  "channels": {
+    "webhook_url": null,
+    "email": null
+  }
+}

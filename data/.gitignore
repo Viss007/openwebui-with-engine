@@ -1,0 +1,16 @@
+# Ignore generated metrics and dashboard files
+metrics/*.md
+dashboard/index.html
+
+# Ignore alert queue
+alerts/*.jsonl
+
+# Ignore agent logs
+.agent_logs/*.jsonl
+
+# Ignore research output
+research/**/*.md
+research/**/*.json
+
+# Keep directory structure
+!.gitkeep
