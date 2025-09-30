@@ -8,7 +8,7 @@ app = FastAPI()
 
 OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com")
 OPENAI_MODEL = os.getenv("openai_model", "gpt-4o-mini")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "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")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 
@@ -34,7 +34,14 @@ def ready():
 def start_optional_components():
     pass
 
-start_optional_components()
+start_optional_components()import openai
+from typing import Dict, List
+
+openai.api_key = OPENAI_API_KEY
+openai.api_base = OPENAI_BASE_URL
+
+CONVERSATIONS: Dict[str, List[Dict[str, str]]] = {}
+
 
 from fastapi.responses import FileResponse
 import os
