@@ -47,3 +47,13 @@ import os
 def _root_html():
     idx = "/app/static/index.html"
     return FileResponse(idx, media_type="text/html") if os.path.isfile(idx) else {"msg":"no ui"}
+from fastapi.responses import FileResponse
+import os
+
+@app.middleware("http")
+async def serve_root_html(request, call_next):
+    if request.url.path == "/":
+        idx = "/app/static/index.html"
+        if os.path.isfile(idx):
+            return FileResponse(idx, media_type="text/html")
+    return await call_next(request)
