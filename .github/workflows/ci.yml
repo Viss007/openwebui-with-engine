@@ -1,10 +1,9 @@
-name: CI
+name: ci
 
 on:
-  push:
-    branches: [main]
   pull_request:
-    branches: [main]
+  push:
+    branches: [ main ]
 
 jobs: # GitHub Actions jobs
   build-test:
@@ -14,10 +13,10 @@ jobs: # GitHub Actions jobs
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: corepack enable
+          cache: 'pnpm'
       - uses: pnpm/action-setup@v3
         with:
           version: 9
           run_install: true
       - run: pnpm build
-      - run: pnpm -s desk` test || echo 'no tests'
+      - run: pnpm -s test || echo 'no tests'
