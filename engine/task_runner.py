@@ -41,6 +41,64 @@ except Exception:
 
 _TASKS.update({'sleep': task_sleep, 'http_get': task_http_get})
 
+# Workspace KPI tasks
+def task_compute_kpis(data_dir: str = 'data', write: bool = True, verbose: bool = False):
+    """Compute KPIs and optionally write metrics file."""
+    import subprocess
+    import sys
+    cmd = [sys.executable, f'{data_dir}/tools/compute_kpis.py', '--data-dir', data_dir]
+    if write:
+        cmd.append('--write')
+    if verbose:
+        cmd.append('--verbose')
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    return {
+        'returncode': result.returncode,
+        'stdout': result.stdout,
+        'stderr': result.stderr
+    }
+
+def task_build_dashboard(data_dir: str = 'data', days: int = 7, verbose: bool = False):
+    """Build HTML dashboard from metrics files."""
+    import subprocess
+    import sys
+    cmd = [sys.executable, f'{data_dir}/tools/build_dashboard.py', 
+           '--data-dir', data_dir, '--days', str(days)]
+    if verbose:
+        cmd.append('--verbose')
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    return {
+        'returncode': result.returncode,
+        'stdout': result.stdout,
+        'stderr': result.stderr
+    }
+
+def task_dispatch_alerts(data_dir: str = 'data', flush: bool = False, 
+                        dry_run: bool = False, verbose: bool = False):
+    """Dispatch queued alerts outside quiet hours."""
+    import subprocess
+    import sys
+    cmd = [sys.executable, f'{data_dir}/tools/alert_dispatch.py', '--data-dir', data_dir]
+    if flush:
+        cmd.append('--flush')
+    if dry_run:
+        cmd.append('--dry-run')
+    if verbose:
+        cmd.append('--verbose')
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    return {
+        'returncode': result.returncode,
+        'stdout': result.stdout,
+        'stderr': result.stderr
+    }
+
+# Register workspace tasks
+_TASKS.update({
+    'compute_kpis': task_compute_kpis,
+    'build_dashboard': task_build_dashboard,
+    'dispatch_alerts': task_dispatch_alerts
+})
+
 def register(name, fn):
     _TASKS[name]=fn
 
