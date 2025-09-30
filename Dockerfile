@@ -1,4 +1,4 @@
-﻿# Pin to Open WebUI base image
+# Pin to Open WebUI base image
 FROM ghcr.io/open-webui/open-webui:latest
 
 WORKDIR /app
