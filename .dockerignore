@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.Venv/
+venv/
+.coverage
+coverage/
+.cache/
+
+# Node
+node_modules/
+dist/
+build/
+
+# Env and logs
+.env
+*.log
+
+# VCS
+.git
+.gitignore
+.gitmodules
+
+# Editors
+.vscode/
+.idea/
+.project
+
+# OS
+.DS_Store
+
+# Tests artifacts
+tests/fixtures/
