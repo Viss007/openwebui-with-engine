@@ -16,10 +16,6 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 static_dir=str(BASE_DIR/"static")
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
-@app.get("/")
-def root():
-    return {"app": "openwebui-with-engine", "status": "ok"}
-
 @app.get("/ui")
 def ui():
     p= BASE_DIR/"static/ui/index.html"
@@ -67,3 +63,4 @@ async def serve_root_html(request, call_next):
         if os.path.isfile(idx):
             return FileResponse(idx, media_type="text/html")
     return await call_next(request)
+
