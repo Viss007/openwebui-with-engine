@@ -64,3 +64,4 @@ async def serve_root_html(request, call_next):
             return FileResponse(idx, media_type="text/html")
     return await call_next(request)
 
+
