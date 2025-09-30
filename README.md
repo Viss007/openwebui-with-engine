@@ -7,6 +7,7 @@ A FastAPI-based web application that combines a Python backend engine with the O
 - **FastAPI Server**: Handles chat API and serves static files
 - **OpenAI Integration**: Configurable OpenAI API integration for chat completions
 - **Task System**: Asynchronous task queue with worker threads
+- **KPI Workspace**: Built-in tools for computing metrics, generating dashboards, and managing alerts
 - **SSE Daemon**: Optional SSE client for Railway-hosted MCP
 - **Static UI**: Chat interface served from `/static` directory
 
@@ -68,6 +69,13 @@ Configure via environment variables:
 - `POST /engine/tasks/submit` - Submit a task
 - `GET /engine/tasks/status/{job_id}` - Check task status
 
+Available tasks:
+- `compute_kpis` - Compute MRR, CAC, D30 retention from CSV data
+- `build_dashboard` - Generate HTML dashboard from metrics
+- `dispatch_alerts` - Process alert queue with quiet hours support
+- `sleep` - Test task that sleeps for N seconds
+- `http_get` - Test task that fetches a URL
+
 ## Project Structure
 
 ```
@@ -78,11 +86,65 @@ Configure via environment variables:
 │   ├── task_runner.py       # Task queue and workers
 │   ├── engine_daemon.py     # Optional SSE daemon
 │   └── entrypoint.sh        # Docker entrypoint
+├── data/                    # KPI workspace
+│   ├── tools/               # KPI computation scripts
+│   ├── metrics/             # Daily metrics reports
+│   ├── dashboard/           # HTML dashboard
+│   ├── alerts/              # Alert queue
+│   ├── config/              # Configuration files
+│   └── README.md            # Workspace documentation
 ├── project/                 # Static UI files
 ├── Dockerfile              # Docker configuration
 ├── requirements.txt        # Python dependencies
 └── Procfile               # Railway/Heroku deployment
 ```
+
+## KPI Workspace
+
+The `data/` directory contains a complete KPI monitoring workspace as specified in `support_autopilot_kpi_pilot.md`.
+
+### Quick Start
+
+1. Add your CSV data files to the `data/` directory:
+   - `billing.csv` - Billing records (date, amount, status)
+   - `ads_spend.csv` - Advertising spend (date, spend)
+   - `new_customers.csv` - New customer acquisitions (date, new_customers)
+
+2. Compute KPIs:
+   ```bash
+   python data/tools/compute_kpis.py --write
+   ```
+
+3. Build dashboard:
+   ```bash
+   python data/tools/build_dashboard.py
+   ```
+
+4. View dashboard:
+   Open `data/dashboard/index.html` in your browser
+
+### Using the Task API
+
+Submit tasks via the REST API:
+
+```bash
+# Compute KPIs
+curl -X POST http://localhost:8080/engine/tasks/submit \
+  -H "Content-Type: application/json" \
+  -d '{"name":"compute_kpis","args":{"write":true}}'
+
+# Build dashboard
+curl -X POST http://localhost:8080/engine/tasks/submit \
+  -H "Content-Type: application/json" \
+  -d '{"name":"build_dashboard","args":{"days":7}}'
+
+# Dispatch alerts
+curl -X POST http://localhost:8080/engine/tasks/submit \
+  -H "Content-Type: application/json" \
+  -d '{"name":"dispatch_alerts","args":{"flush":false}}'
+```
+
+See [data/README.md](data/README.md) for detailed documentation.
 
 ## Deployment
 
