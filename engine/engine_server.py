@@ -139,7 +139,7 @@ async def api_chat(request: ChatRequest) -> ChatResponse:
         logging.error(f"Chat error: {e}")
         raise HTTPException(status_code=500, detail=f"Chat error: {str(e)}")
 
-@app.get("/mode")
+@app.get("/api/mode")
 def mode():
     """Return the current model name and configuration."""
     return {
@@ -148,7 +148,13 @@ def mode():
         "base_url": OPENAI_BASE_URL
     }
 
-@app.get("/history/{session_id}")
+# Backward compatibility alias
+@app.get("/mode")
+def mode_legacy():
+    """Legacy endpoint - use /api/mode instead"""
+    return mode()
+
+@app.get("/api/history/{session_id}")
 def get_history(session_id: str):
     """Return the conversation history for a given session."""
     history = CONVERSATIONS.get(session_id, [])
@@ -163,12 +169,13 @@ def get_history(session_id: str):
             })
     return {"history": formatted_history}
 
-@app.get("/api/history")
-def get_history_api(session_identifier: str):
-    """API endpoint for history (alternative format for UI)"""
-    return get_history(session_identifier)
+# Backward compatibility alias
+@app.get("/history/{session_id}")
+def get_history_legacy(session_id: str):
+    """Legacy endpoint - use /api/history/{session_id} instead"""
+    return get_history(session_id)
 
-@app.get("/proof/messages")
+@app.get("/api/proof/messages")
 def get_proof_messages(limit: int = 10):
     """Storage proof endpoint for UI"""
     # Flatten all conversations for proof
@@ -186,6 +193,12 @@ def get_proof_messages(limit: int = 10):
         "ok": True,
         "rows": rows[-limit:]
     }
+
+# Backward compatibility alias
+@app.get("/proof/messages")
+def get_proof_messages_legacy(limit: int = 10):
+    """Legacy endpoint - use /api/proof/messages instead"""
+    return get_proof_messages(limit)
 
 def start_optional_components():
     """Initialize optional components"""
