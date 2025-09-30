@@ -1,8 +1,23 @@
-- uses: actions/setup-node@v4
-  with: { node-version: 20 }
-- run: corepack enable
-- uses: pnpm/action-setup@v3
-  with: { version: 9, run_install: true }
-- run: pnpm build
-- run: pnpm -s test || echo 'no tests'
+name: CI
 
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs: # GitHub Actions jobs
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: corepack enable
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+          run_install: true
+      - run: pnpm build
+      - run: pnpm -s desk` test || echo 'no tests'
