@@ -1,4 +1,4 @@
-# Pin to Open WebUI base image
+﻿# Pin to Open WebUI base image
 FROM ghcr.io/open-webui/open-webui:latest
 
 WORKDIR /app
@@ -21,3 +21,7 @@ EXPOSE 8080
 
 # Start the combined engine + web server
 CMD ["/bin/sh","-lc","/app/engine/entrypoint.sh"]
+
+# Copy static UI
+COPY project /app/static
+

@@ -1,4 +1,4 @@
-import os
+﻿import os
 import logging
 from pathlib import Path
 from fastapi import FastAPI, Response
@@ -39,3 +39,4 @@ def start_optional_components():
     pass
 
 start_optional_components()
+
