@@ -40,3 +40,10 @@ def start_optional_components():
 
 start_optional_components()
 
+from fastapi.responses import FileResponse
+import os
+
+@app.get("/")
+def _root_html():
+    idx = "/app/static/index.html"
+    return FileResponse(idx, media_type="text/html") if os.path.isfile(idx) else {"msg":"no ui"}
