@@ -5,18 +5,25 @@ on:
   push:
     branches: [ main ]
 
-jobs: # GitHub Actions jobs
+jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-python@v5
         with:
-          node-version: 20
-          cache: 'pnpm'
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
-          run_install: true
-      - run: pnpm build
-      - run: pnpm -s test || echo 'no tests'
+          python-version: '3.12'
+          cache: 'pip'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Check Python syntax
+        run: python -m py_compile engine/engine_server.py engine/task_api.py engine/task_runner.py
+      - name: Test server imports
+        run: python -c "from engine import engine_server, task_api, task_runner; print('All imports successful')"
+  
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t openwebui-engine:test .
